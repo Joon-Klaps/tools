@@ -123,4 +123,49 @@ nextflow_function {
             )
         }
     }
+
+
+    test("Test softwareVersionsToYAML - list") {
+        function "softwareVersionsToYAML"
+
+        when {
+            function {
+                """
+                input[0] = [
+                    [ 'tool1', 1.2 ],
+                    [ 'tool2', 1.2.3 ],
+                    [ 'tool3', 1 ],
+                    [ 'tool3', "1" ]
+                ]
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert function.success },
+                { assert snapshot(function.result).match() }
+            )
+        }
+    }
+
+    test("Test softwareVersionsToYAML - YAML") {
+        function "softwareVersionsToYAML"
+
+        when {
+            function {
+                """
+                input[0] = file(params.modules_testdata_base_path + 'generic/config/config_template.yte.yaml', checkIfExists: true)
+                """
+            }
+        }
+
+        then {
+            assertAll(
+                { assert function.success },
+                { assert snapshot(function.result).match() }
+            )
+        }
+    }
 }
+
